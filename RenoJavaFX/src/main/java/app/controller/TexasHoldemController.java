@@ -1,4 +1,5 @@
 package app.controller;
+//package pkgCore.Gameplay;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ import javafx.util.Duration;
 import pkgCore.Action;
 import pkgCore.Card;
 import pkgCore.DrawResult;
+import pkgCore.GamePlay;
 import pkgCore.Player;
 import pkgCore.Table;
 import pkgCoreInterface.iCardDraw;
@@ -98,6 +100,8 @@ public class TexasHoldemController implements Initializable {
 
 	@FXML
 	private HBox hbProgressBarp4;
+	
+	private int count = 0;
 
 	public void setMainApp(Poker mainApp) {
 		this.mainApp = mainApp;
@@ -153,12 +157,12 @@ public class TexasHoldemController implements Initializable {
 	 * HandleDraw - Handle the draw result
 	 */
 	public void HandleDraw(ArrayList<DrawResult> lstDrawResult) {
+		
+		if (lstDrawResult.get(0).geteDrawCount() == eDrawCount.FIRST) {
+			
+		}
 
 		SequentialTransition MainTransition = new SequentialTransition();
-
-		if (lstDrawResult.get(0).geteDrawCount() == eDrawCount.FIRST) {
-			ClearCardBoxes();
-		}
 
 		for (DrawResult DR : lstDrawResult) {
 
@@ -179,6 +183,17 @@ public class TexasHoldemController implements Initializable {
 		}
 
 		MainTransition.play();
+		
+		if(count == 1)
+		{
+			
+		}
+		
+		if(count == 3)
+		{
+			
+		}
+		
 	}
 
 	/**
@@ -213,7 +228,7 @@ public class TexasHoldemController implements Initializable {
 		// Second parallel is to fade in/out
 
 		// Create a Translate Transition
-		TranslateTransition transT = CreateTranslateTransition(pntDeck, pntCardDealt, img);
+		//TranslateTransition transT = CreateTranslateTransition(pntDeck, pntCardDealt, img);
 
 		// Create a Rotate transition
 		RotateTransition rotT = CreateRotateTransition(img);
@@ -221,12 +236,12 @@ public class TexasHoldemController implements Initializable {
 		// ScaleTransition scaleT = CreateScaleTransition(iCardImg);
 		
 		// Create a Path transition (we're not using it, but this is how you do it)
-		// PathTransition pathT = CreatePathTransition(pntDeck, pntCardDealt, img);
+		PathTransition pathT = CreatePathTransition(pntDeck, pntCardDealt, img);
 
 		// Create a new Parallel transition.
 		ParallelTransition patTMoveRot = new ParallelTransition();
 		// Add transitions you want to execute currently to the parallel transition
-		patTMoveRot.getChildren().addAll(rotT, transT);
+		patTMoveRot.getChildren().addAll(rotT, pathT);
 
 		// Create a new Parallel transition to fade in/fade out
 		ParallelTransition patTFadeInFadeOut = createFadeTransition((ImageView) HBoxTarget.getChildren().get(iCardNbr),
@@ -345,6 +360,7 @@ public class TexasHoldemController implements Initializable {
 	private void btnStartGame(ActionEvent event) {
 		Action act = new Action(eAction.StartGamePoker, this.mainApp.getAppPlayer());
 		this.mainApp.messageSend(act);
+		ClearCardBoxes();
 	}
 
 	/**
@@ -358,6 +374,11 @@ public class TexasHoldemController implements Initializable {
 	private void btnDraw_onAction() {
 		Action act = new Action(eAction.Draw, this.mainApp.getAppPlayer());
 		this.mainApp.messageSend(act);
+		
+		if(count < 3)
+		{
+			count++;
+		}
 	}
 
 	/**
@@ -557,11 +578,9 @@ public class TexasHoldemController implements Initializable {
 	private PathTransition CreatePathTransition(Point2D fromPoint, Point2D toPoint, ImageView img) {
 		Path path = new Path();
 
-		// TODO: Fix the Path transition. My Path looks terrible... do something cool :)
-
 		path.getElements().add(new MoveTo(fromPoint.getX(), fromPoint.getY()));
-		path.getElements().add(new CubicCurveTo(toPoint.getX() * 2, toPoint.getY() * 2, toPoint.getX() / 3,
-				toPoint.getY() / 3, toPoint.getX(), toPoint.getY()));
+		path.getElements().add(new CubicCurveTo(toPoint.getX() * 3/8, toPoint.getY() * 3/8, toPoint.getX() / 7/2,
+				toPoint.getY() / 7/2, toPoint.getX(), toPoint.getY()));
 		// path.getElements().add(new CubicCurveTo(0, 120, 0, 240, 380, 240));
 		PathTransition pathTransition = new PathTransition();
 		pathTransition.setDuration(Duration.millis(750));
@@ -599,17 +618,29 @@ public class TexasHoldemController implements Initializable {
 
 		Circle c1 = new Circle(fromPoint.getX(), fromPoint.getY(), 5);
 		Circle c2 = new Circle(toPoint.getX(), toPoint.getY(), 5);
+		// Circle c3 = new Circle(toPoint.getX(), toPoint.getY(), 5);
+		
 		c1.setFill(Color.DARKRED);
 		c2.setFill(Color.LIGHTPINK);
+		// c3.setFill(Color.LIGHTPINK);
 		parentNode.getChildren().add(c1);
 		parentNode.getChildren().add(c2);
+		// parentNode.getChildren().add(c3);
 
 		TranslateTransition translateTransition = new TranslateTransition(Duration.millis(iAnimationLength), img);
 
 		translateTransition.setFromX(0);
-		translateTransition.setToX(toPoint.getX() - fromPoint.getX());
 		translateTransition.setFromY(0);
+		
+		// if(Pcount == 1)
+		
+		translateTransition.setToX(toPoint.getX() - fromPoint.getX());
 		translateTransition.setToY(toPoint.getY() - fromPoint.getY());
+		
+		// else if(Pcount == 2)
+		
+		//translateTransition.setToX(toPoint.getX()+90 - fromPoint.getX());
+		//translateTransition.setToY(toPoint.getY()+6 - fromPoint.getY());
 		translateTransition.setCycleCount(1);
 		translateTransition.setAutoReverse(false);
 

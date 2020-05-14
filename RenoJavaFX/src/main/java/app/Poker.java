@@ -222,7 +222,7 @@ public class Poker extends Application {
 		 * 
 		 * messageReceived - A message received from the Client is
 		 * sent by the Hub.  
-		 * The following messgaes will be handled...
+		 * The following messages will be handled...
 		 * 
 		 * GamePlay - call HandleGamePlayMessage
 		 * Table - call HandleTableMessage
